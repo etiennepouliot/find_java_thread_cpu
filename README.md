@@ -19,4 +19,34 @@ Options:
 
 ```
 
-For example : python find_java_thread_cpu.py 
+For example, launching ```java CPULoadGenerator``` (http://middlewaremagic.com/weblogic/?p=958), finding the pid and starting ``` python find_java_thread_cpu.py --pid=34538 ``` will produce :
+
+```
+---------------------------------------------------------Date : 2016-11-08 13:24:00.414002-------CPU : 99.5---------------------------------------------------------------------------------
+"Thread-0" prio=10 tid=0x00007f2eb00a7800 nid=0x7a96 runnable [0x00007f2ea6365000]
+   java.lang.Thread.State: RUNNABLE
+        at java.lang.StrictMath.atan(Native Method)
+        at java.lang.Math.atan(Math.java:204)
+        at CPULoadGenerator$1.run(CPULoadGenerator.java:16)
+        at java.lang.Thread.run(Thread.java:744)
+
+
+---------------------------------------------------------Date : 2016-11-08 13:24:30.784752-------CPU : 99.5---------------------------------------------------------------------------------
+"Thread-0" prio=10 tid=0x00007f2eb00a7800 nid=0x7a96 runnable [0x00007f2ea6365000]
+   java.lang.Thread.State: RUNNABLE
+        at java.lang.StrictMath.atan(Native Method)
+        at java.lang.Math.atan(Math.java:204)
+        at CPULoadGenerator$1.run(CPULoadGenerator.java:16)
+        at java.lang.Thread.run(Thread.java:744)
+
+
+---------------------------------------------------------Date : 2016-11-08 13:25:01.219618-------CPU : 99.5---------------------------------------------------------------------------------
+"Thread-0" prio=10 tid=0x00007f2eb00a7800 nid=0x7a96 runnable [0x00007f2ea6365000]
+   java.lang.Thread.State: RUNNABLE
+        at java.lang.StrictMath.atan(Native Method)
+        at java.lang.Math.atan(Math.java:204)
+        at CPULoadGenerator$1.run(CPULoadGenerator.java:16)
+        at java.lang.Thread.run(Thread.java:744)
+
+
+```
