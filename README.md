@@ -1,10 +1,8 @@
 # find_java_thread_cpu
-Let you find out what specify thread is using most CPU in a java process and print the stack
-
-Let's say you have a java process that is using a lot of CPU and you want to find in real time what thread is using all that CPU.  This program let's you find it out.
+Let's say you have a java process that is using a lot of CPU and you want to find in real time what thread is using all that CPU and the stack of that thread.  This program let's you find it out.
 
 Options :
-<code>
+```
 Usage: find_java_thread_cpu.py [options]
 
 Options:
@@ -18,5 +16,7 @@ Options:
   --username=USERNAME  Username of the owner of the process (default try to
                        find it)
   --appenddate         If using a log file, append date to the file
-</code>
 
+```
+
+For example : python find_java_thread_cpu.py 
