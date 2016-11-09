@@ -68,7 +68,7 @@ def main():
             print(err)
         out = out.replace('\n','').split(' ')
         cpu = out[0]
-        nid = out[1]
+        nid = out[-1]
         nid_hex=hex(int(nid))
         if os.getenv('USER') == 'root' and username != 'root': #we run the command as the user running the java process
             command = 'su {username} -c \'{jstack} -l {pid} |  grep -A500 {nid_hex} | grep -m1 "^$" -B 500\''.format(username=username,jstack=jstack,pid=pid,nid_hex=nid_hex)
