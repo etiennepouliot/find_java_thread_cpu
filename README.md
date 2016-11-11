@@ -52,7 +52,7 @@ For example, launching ```java CPULoadGenerator``` (http://middlewaremagic.com/w
 ```
 
 # Q & A
-Why I am getting something like this :
+**Why I am getting something like this :**
 ```
    java.lang.Thread.State: WAITING (parking)
         at sun.misc.Unsafe.park(Native Method)
@@ -68,6 +68,6 @@ Why I am getting something like this :
 
 The script is not perfect, it means that beetween the time the top command was run to find the thread and the time the stack was run, the thread got to a park state, meaning it's waiting, you can ignore those.
 
-Why using top to find most used thread :
+**Why using top to find most used thread :**
 
 At first I tryed with ps, but surprisingly the result wasn't reliable for threads.   If you have a better way to do it I would to like to hear it. 
