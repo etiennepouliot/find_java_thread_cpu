@@ -18,6 +18,7 @@ def main():
     parser.add_option("--jstack",type="string", dest="jstack",help=u"Full path to jstack (default to $JDK_HOME/bin/jstack")
     parser.add_option("--username",type="string", dest="username",help=u"Username of the owner of the process (default try to find it)")
     parser.add_option("--appenddate",action="store_true", dest="appenddate",help=u"If using a log file, append date to the file")
+    parser.add_option("--mincpu",type="int", dest="mincpu",help=u"Don't get a stack if the CPU usager is less than %x (default to 0)",default=0)
     (options, args) = parser.parse_args()
 
     pid = None
@@ -59,35 +60,53 @@ def main():
             filename = options.log + datetime.datetime.now().strftime("%d_%m_%Y-%H")
 
     limit = datetime.datetime.now() + datetime.timedelta(minutes=options.duration)
-    
+    #os.setgid(1003)
+    #os.setuid(100)
     while datetime.datetime.now() < limit :
-        command = 'ps --no-headers -To pcpu,tid -p {0} | sort -r -k1 | head  -1 | sed -e "s/^ //"'.format(pid)
+        #command = 'ps --no-headers -To pcpu,tid -p {0} | sort -r -k1 | head  -1 | sed -e "s/^ //"'.format(pid)
+        command = '/usr/bin/top -n 1 -H -p {0} -o %CPU -b -w 1000 | grep -m1 java'.format(pid)
+        #print command
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out,err = process.communicate()
+        while '  '  in out :
+            out = out.replace('  ',' ')
         if err != '' :
             print(err)
-        out = out.replace('\n','').split(' ')
-        cpu = out[0]
-        nid = out[-1]
-        nid_hex=hex(int(nid))
-        if os.getenv('USER') == 'root' and username != 'root': #we run the command as the user running the java process
-            command = 'su {username} -c \'{jstack} -l {pid} |  grep -A500 {nid_hex} | grep -m1 "^$" -B 500\''.format(username=username,jstack=jstack,pid=pid,nid_hex=nid_hex)
-        else : #we are running as the same user as the java process
-            command = '{jstack} -l {pid} |  grep -A500 {nid_hex} | grep -m1 "^$" -B 500'.format(jstack=jstack,pid=pid,nid_hex=nid_hex)
-        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        out,err = process.communicate()
-
-        out = '---------------------------------------------------------Date : {0}-------CPU : {1}---------------------------------------------------------------------------------\n'.format(datetime.datetime.now(),cpu) + out
-        if err != '' :
-            print(err)
-        print(out)
-        if filename is not None :
-            try : 
-                with open(filename,'ab') as f :
-                    f.write(out)
-            except :
-                print('Could not write to ' + filename)
-        time.sleep(options.every)
+        out = out.split(' ')
+        cpu = out[-4]
+        nid = out[0]
+        if nid != pid and int(cpu.split('.')[0]) > options.mincpu : #not worth taking a stack if the main process is using most CPU
+            nid_hex=hex(int(nid))
+            if (os.getenv('USER') == 'root' and username != 'root'): #we run the command as the user running the java process
+                command = 'su {username} -c "{jstack} -l {pid}"'.format(username=username,jstack=jstack,pid=pid)
+            else : #we are running as the same user as the java process
+                command = '{jstack} -l {pid}'.format(jstack=jstack,pid=pid)
+            process = subprocess.Popen(command,shell=True, stdout=subprocess.PIPE)
+            out,err = process.communicate()
+            begin = None
+            end = None
+            out = out.split('\n')
+            for index, line in enumerate(out):
+                if len(line) > 0:
+                    if begin is not None and line[0] not in [' ','\t'] :
+                        end = index -1
+                        break
+                    if nid_hex in line :
+                        begin = index
+            lines =  '\n'.join(out[begin:end])
+            towrite = '---------------------------------------------------------Date : {0}-------CPU : {1}---------------------------------------------------------------------------------\n'.format(datetime.datetime.now(),cpu) + lines
+            if err != '' :
+                print(err)
+            print(towrite)
+            if filename is not None :
+                try : 
+                    with open(filename,'ab') as f :
+                        f.write(towrite)
+                except :
+                    print('Could not write to ' + filename)
+            time.sleep(options.every)
+        else :
+            time.sleep(1)
 
 if __name__ == '__main__' :
     main()
