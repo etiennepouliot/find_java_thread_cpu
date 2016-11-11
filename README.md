@@ -16,6 +16,8 @@ Options:
   --username=USERNAME  Username of the owner of the process (default try to
                        find it)
   --appenddate         If using a log file, append date to the file
+  --mincpu=MINCPU      Don't get a stack if the CPU usager is less than %x
+                       (default to 0)
 
 ```
 
