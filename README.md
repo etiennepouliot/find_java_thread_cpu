@@ -16,6 +16,8 @@ Options:
   --username=USERNAME  Username of the owner of the process (default try to
                        find it)
   --appenddate         If using a log file, append date to the file
+  --mincpu=MINCPU      Don't get a stack if the CPU usager is less than %x
+                       (default to 0)
 
 ```
 
@@ -50,3 +52,24 @@ For example, launching ```java CPULoadGenerator``` (http://middlewaremagic.com/w
 
 
 ```
+
+# Q & A
+**Why I am getting something like this :**
+```
+   java.lang.Thread.State: WAITING (parking)
+        at sun.misc.Unsafe.park(Native Method)
+        - parking to wait for  <0x000000061d8fe5f8> (a java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject)
+        at java.util.concurrent.locks.LockSupport.park(Unknown Source)
+        at java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(Unknown Source)
+        at java.util.concurrent.LinkedBlockingQueue.take(Unknown Source)
+        at java.util.concurrent.ThreadPoolExecutor.getTask(Unknown Source)
+        at java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+        at java.lang.Thread.run(Unknown Source)
+```
+
+The script is not perfect, it means that beetween the time the top command was run to find the thread and the time the stack was run, the thread got to a park state, meaning it's waiting, you can ignore those.
+
+**Why using top to find most used thread :**
+
+At first I tryed with ps, but surprisingly the result wasn't reliable for threads.   If you have a better way to do it I would to like to hear it. 
