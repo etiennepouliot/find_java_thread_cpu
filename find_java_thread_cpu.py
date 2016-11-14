@@ -60,8 +60,7 @@ def main():
             filename = options.log + datetime.datetime.now().strftime("%d_%m_%Y-%H")
 
     limit = datetime.datetime.now() + datetime.timedelta(minutes=options.duration)
-    #os.setgid(1003)
-    #os.setuid(100)
+
     while datetime.datetime.now() < limit :
         #command = 'ps --no-headers -To pcpu,tid -p {0} | sort -r -k1 | head  -1 | sed -e "s/^ //"'.format(pid)
         command = '/usr/bin/top -n 1 -H -p {0} -o %CPU -b -w 1000 | grep -m1 java'.format(pid)
