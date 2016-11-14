@@ -75,6 +75,10 @@ def main():
         out = out.split(' ')
         cpu = out[-4]
         nid = out[0]
+        if nid == '' :
+            nid=out[1]
+        if nid == '' :
+            nid=out[2]
         if nid != pid and int(cpu.split('.')[0]) > options.mincpu : #not worth taking a stack if the main process is using most CPU
             nid_hex=hex(int(nid))
             if (os.getenv('USER') == 'root' and username != 'root'): #we run the command as the user running the java process
