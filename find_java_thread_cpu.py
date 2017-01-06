@@ -47,9 +47,8 @@ def main():
     if options.username is not None :
         username = options.username
     else :
-        process = subprocess.Popen('ps hu {0}'.format(pid), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        out,err = process.communicate()
-        username = (out.split(' ')[0])
+        proc_stat_file = os.stat("/proc/{0}".format(pid)) #get the process owner from /proc
+        username = proc_stat_file.st_uid
         if unicode(username).isnumeric(): #we got the uid, go get the username
             username = pwd.getpwuid(int(username)).pw_name
 
